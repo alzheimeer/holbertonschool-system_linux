@@ -9,26 +9,37 @@
 #include <time.h>
 #include <pwd.h>
 #include <grp.h>
-
+#include <errno.h>
+#include <string.h>
 
 
 int main(int argc, char **argv)
 {
+	char buffer[200];
+	char sal[200];
 	struct stat sb;
 	struct dirent *read;
-	struct timespec ts;
+	struct group *grp;
+	struct passwd *pw;
+	struct tm *mtm;
 	DIR *dir;
 	char *filename = argv[1];
 	dir = opendir(filename);
-	char output[20];
-	struct group *grp;
-	struct passwd *pw;
-	char *time;
+
+	
+
+	if (argc != 2) {
+        perror("Usage: <pathname>\n");
+        exit(EXIT_FAILURE);
+    }
 
 	while ((read = readdir(dir)) != NULL)
 	{
-
-		lstat(output,&sb);
+		snprintf(sal, 20, "%s/%s",filename,read->d_name);
+		if(lstat(sal, &sb) == -1) {
+    		perror("stat");
+    		return errno;
+		}
 		printf("%c", (sb.st_mode & S_IFDIR) ? 'd' : '-');
 		printf("%c", (sb.st_mode & S_IRUSR) ? 'r' : '-');
 		printf("%c", (sb.st_mode & S_IWUSR) ? 'w' : '-');
@@ -43,16 +54,12 @@ int main(int argc, char **argv)
 		pw = getpwuid(sb.st_uid);
 		grp = getgrgid(sb.st_gid);
 		printf(" %s %s ", pw->pw_name, grp->gr_name);
-		time = ctime(&(sb.st_mtime));
 
-
-		snprintf(output, 20, "%s/%s",filename,read->d_name);
-		printf("%ld %s %s\n", sb.st_size, time, read->d_name);
-
-
-
-
+		mtm = localtime(&sb.st_mtime);
+		strftime(buffer, sizeof(buffer), "%H:%M", mtm);
+		printf("%ld %s %s\n", sb.st_size, buffer, read->d_name);
 	}
 
 	closedir(dir);
+	return(0);
 }
