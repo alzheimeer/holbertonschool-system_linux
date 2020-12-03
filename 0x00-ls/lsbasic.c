@@ -144,12 +144,12 @@ int basic(char *filename, char **argv, int caseT)
 			  case 2:
 			  		if (*read->d_name == '.')
 						continue;
-					printf("%s ", read->d_name);
+					printf("%s  ", read->d_name);
 				break;
 			  case 3:
 			  		if (*read->d_name == '.')
 						continue;
-					printf("%s\n", read->d_name);
+					printf("%s  \n", read->d_name);
 				break;
 
 			  default:
