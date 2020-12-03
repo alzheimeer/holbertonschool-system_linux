@@ -1,16 +1,4 @@
-#include <unistd.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include <sys/stat.h>
-#include <stdlib.h>
-#include <sys/types.h>
-#include <sys/mman.h>
-#include <dirent.h>
-#include <time.h>
-#include <pwd.h>
-#include <grp.h>
-#include <errno.h>
-#include <string.h>
+#include "hls.h"
 
 /**
  * main - check the code for Holberton School students.
@@ -65,9 +53,9 @@ int main(int argc, char **argv)
 int la(struct stat sb, struct dirent *read)
 {
 	char buffer[200];
+	char *time;
 	struct group *grp;
 	struct passwd *pw;
-	struct tm *mtm;
 
 	printf("%c", (sb.st_mode & S_IFDIR) ? 'd' : '-');
 	printf("%c", (sb.st_mode & S_IRUSR) ? 'r' : '-');
@@ -79,10 +67,11 @@ int la(struct stat sb, struct dirent *read)
 	printf("%c", (sb.st_mode & S_IROTH) ? 'r' : '-');
 	printf("%c", (sb.st_mode & S_IWOTH) ? 'w' : '-');
 	printf("%c", (sb.st_mode & S_IXOTH) ? 'x' : '-');
+
 	pw = getpwuid(sb.st_uid);
 	grp = getgrgid(sb.st_gid);
 	printf(" %s %s ", pw->pw_name, grp->gr_name);
-	mtm = localtime(&sb.st_mtime);
-	strftime(buffer, sizeof(buffer), "%b %d %H:%M", mtm);
-	printf("%ld %s %s\n", sb.st_size, buffer, read->d_name);
+
+	time = ctime(&(sb.st_mtime));
+	printf("%ld %s %s\n", sb.st_size, time, read->d_name);
 }
