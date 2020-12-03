@@ -8,37 +8,71 @@
  */
 int main(int argc, char **argv)
 {
-	char sal[50], perr[50];
-	struct stat sb;
-	struct dirent *read;
-	DIR *dir;
 	char *filename;
+	int i, nDir = 0;
+	
 
 	if (argc == 1)
-		filename = "./";
-	else if (argc == 2)
-		filename = argv[1];
-	dir = opendir(filename);
-	if (dir != NULL)
-	{
-		while ((read = readdir(dir)) != NULL)
-		{
-			snprintf(sal, 20, "%s/%s", filename, read->d_name);
-			if (lstat(sal, &sb) == -1)
-			{
-				perror("stat");
-				return (errno);
-			}
-			la(sb, read);
-		}
-	}
+		basic("./", *argv, 2);
 	else
 	{
-		snprintf(perr, 50, "%s: cannot access %s", argv[0], argv[1]);
-		perror(perr);
-		exit(EXIT_FAILURE);
+		for(i = 1; i < argc; i++)
+		{
+			printf("argumento: %s\n",argv[i]);
+			if(argv[i][0] == '-')
+			{
+				if (strcmp(argv[i], "-1") == 0) 
+				{
+					basic("./", *argv, 3);
+				} 
+				else if (strcmp(argv[i], "-a") == 0)
+				{
+					printf("task 3: ver archivos Horizontales + Ocultos\n");
+				}
+				else if (strcmp(argv[i], "-A") == 0)
+				{
+					printf("task 4\n");
+				}
+				else if (strcmp(argv[i], "-l") == 0)
+				{
+					printf("task 5\n");
+				}
+				else if (strcmp(argv[i], "-lA") == 0)
+				{
+					printf("task 6 combina -lA -Al -la  -al \n");
+				}
+				else if (strcmp(argv[i], "-r") == 0)
+				{
+					printf("task 7\n");
+				}
+				else if (strcmp(argv[i], "-S") == 0)
+				{
+					printf("task 8\n");
+				}
+				else if (strcmp(argv[i], "-t") == 0)
+				{
+					printf("task 9\n");
+				}
+				else if (strcmp(argv[i], "-R") == 0)
+				{
+					printf("task 10\n");
+				}
+				else 
+				{
+					printf("Opcion Erronea\n");
+				}
+			}
+			else
+				nDir++;
+		
+			if (argc == 2)
+				filename = argv[1];
+		}
+		if (nDir > 1)
+			printf("NDir: %d\n", nDir);
 	}
-	closedir(dir);
+		
+	
 	return (0);
 }
 
@@ -50,7 +84,7 @@ int main(int argc, char **argv)
  * @read:  fdsfsfsfs
  * Return: Always 0.
  */
-int la(struct stat sb, struct dirent *read)
+int ldetails(struct stat sb, struct dirent *read)
 {
 	char buffer[200];
 	char *time;
@@ -74,4 +108,57 @@ int la(struct stat sb, struct dirent *read)
 
 	time = ctime(&(sb.st_mtime));
 	printf("%ld %s %s\n", sb.st_size, time, read->d_name);
+}
+
+/**
+ * basic - check the code for Holberton School students.
+ * @sb: number the arguments
+ * @read:  fdsfsfsfs
+ * Return: Always 0.
+ */
+int basic(char *filename, char **argv, int caseT)
+{
+	
+	char sal[50], perr[50];
+	struct stat sb;
+	struct dirent *read;
+	DIR *dir;
+	
+
+	dir = opendir(filename);
+	if (dir != NULL)
+	{
+		while ((read = readdir(dir)) != NULL)
+		{
+			snprintf(sal, 20, "%s/%s", filename, read->d_name);
+			if (lstat(sal, &sb) == -1)
+			{
+				perror("stat");
+				return (errno);
+			}
+			switch (caseT)
+			{
+			  case 1:
+					ldetails(sb, read);
+				break;
+			  case 2:
+					printf("%s ", read->d_name);
+				break;
+			  case 3:
+					printf("%s\n", read->d_name);
+				break;
+
+			  default:
+				break;
+			}
+		}
+	}
+	else
+	{
+		snprintf(perr, 50, "%s: cannot access %s", argv[0], argv[1]);
+		perror(perr);
+		exit(EXIT_FAILURE);
+	}
+	closedir(dir);
+	return(0);
 }
