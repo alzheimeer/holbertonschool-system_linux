@@ -1,16 +1,4 @@
-#include <unistd.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include <sys/stat.h>
-#include <stdlib.h>
-#include <sys/types.h>
-#include <sys/mman.h>
-#include <dirent.h>
-#include <time.h>
-#include <pwd.h>
-#include <grp.h>
-#include <errno.h>
-#include <string.h>
+#include "hls.h"
 
 /**
  * main - check the code for Holberton School students.
