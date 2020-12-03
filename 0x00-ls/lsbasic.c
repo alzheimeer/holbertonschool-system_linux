@@ -18,7 +18,6 @@ int main(int argc, char **argv)
 	{
 		for(i = 1; i < argc; i++)
 		{
-			printf("argumento: %s\n",argv[i]);
 			if(argv[i][0] == '-')
 			{
 				if (strcmp(argv[i], "-1") == 0) 
@@ -70,7 +69,7 @@ int main(int argc, char **argv)
 		
 		}
 		if (nDir == 1)
-			basic(argv[1], *argv, 1);
+			basic(argv[1], *argv, 2);
 	}
 		
 	
@@ -143,9 +142,13 @@ int basic(char *filename, char **argv, int caseT)
 					ldetails(sb, read);
 				break;
 			  case 2:
+			  		if (*read->d_name == '.')
+						continue;
 					printf("%s ", read->d_name);
 				break;
 			  case 3:
+			  		if (*read->d_name == '.')
+						continue;
 					printf("%s\n", read->d_name);
 				break;
 
