@@ -8,85 +8,52 @@
  */
 int main(int argc, char **argv)
 {
-	char *filename;
 	int i, nDir = 0;
-	
 
 	if (argc == 1)
-		basic("./", *argv, 2);
+		basic("./", argv, 2);
 	else
 	{
-		for(i = 1; i < argc; i++)
+		for (i = 1; i < argc; i++)
 		{
-			if(argv[i][0] == '-')
+			if (argv[i][0] == '-')
 			{
-				if (strcmp(argv[i], "-1") == 0) 
-				{
-					basic("./", *argv, 3);
-				} 
+				if (strcmp(argv[i], "-1") == 0)
+					basic("./", argv, 3);
 				else if (strcmp(argv[i], "-a") == 0)
-				{
 					printf("task 3: ver archivos Horizontales + Ocultos\n");
-				}
 				else if (strcmp(argv[i], "-A") == 0)
-				{
-					printf("task 4\n");
-				}
+					printf("task 4: ver archivos Horizontales + Ocultos y sin . y ..\n");
 				else if (strcmp(argv[i], "-l") == 0)
-				{
-					printf("task 5\n");
-				}
-				else if (strcmp(argv[i], "-lA") == 0)
-				{
+					printf("task 5: todos los formatos\n");
+				else if (strcmp(argv[i], "-lA") == 0 || strcmp(argv[i], "-Al") == 0)
 					printf("task 6 combina -lA -Al -la  -al \n");
-				}
 				else if (strcmp(argv[i], "-r") == 0)
-				{
-					printf("task 7\n");
-				}
+					printf("task 7: reverso\n");
 				else if (strcmp(argv[i], "-S") == 0)
-				{
-					printf("task 8\n");
-				}
+					printf("task 8: ordena por tamaño\n");
 				else if (strcmp(argv[i], "-t") == 0)
-				{
-					printf("task 9\n");
-				}
+					printf("task 9: ordena por tiempo\n");
 				else if (strcmp(argv[i], "-R") == 0)
-				{
-					printf("task 10\n");
-				}
-				else 
-				{
+					printf("task 10:Recursion\n");
+				else
 					printf("Opcion Erronea\n");
-				}
 			}
 			else
 				nDir++;
-		
-			if (argc == 2)
-				filename = argv[1];
-		
 		}
-		if (nDir == 1)
-			basic(argv[1], *argv, 2);
 	}
-		
-	
 	return (0);
 }
 
-
-
 /**
- * la - check the code for Holberton School students.
+ * ldetails - check the code for Holberton School students.
  * @sb: number the arguments
  * @read:  fdsfsfsfs
  * Return: Always 0.
  */
 int ldetails(struct stat sb, struct dirent *read)
 {
-	char buffer[200];
 	char *time;
 	struct group *grp;
 	struct passwd *pw;
@@ -107,23 +74,25 @@ int ldetails(struct stat sb, struct dirent *read)
 	printf(" %s %s ", pw->pw_name, grp->gr_name);
 
 	time = ctime(&(sb.st_mtime));
+	time[16] = '\0';
+	time = time + 4;
 	printf("%ld %s %s\n", sb.st_size, time, read->d_name);
+	return (0);
 }
 
 /**
  * basic - check the code for Holberton School students.
- * @sb: number the arguments
- * @read:  fdsfsfsfs
+ * @filename: number the arguments
+ * @argv:  fdsfsfsfs
+ * @caseT: fsdfsdfsdf
  * Return: Always 0.
  */
 int basic(char *filename, char **argv, int caseT)
 {
-	
-	char sal[50], perr[50];
+	char sal[50];
 	struct stat sb;
 	struct dirent *read;
 	DIR *dir;
-	
 
 	dir = opendir(filename);
 	if (dir != NULL)
@@ -138,31 +107,43 @@ int basic(char *filename, char **argv, int caseT)
 			}
 			switch (caseT)
 			{
-			  case 1:
-					ldetails(sb, read);
+			case 1:
+				ldetails(sb, read);
 				break;
-			  case 2:
-			  		if (*read->d_name == '.')
-						continue;
-					printf("%s  ", read->d_name);
+			case 2:
+				if (*read->d_name == '.')
+					continue;
+				printf("%s  ", read->d_name);
 				break;
-			  case 3:
-			  		if (*read->d_name == '.')
-						continue;
-					printf("%s  \n", read->d_name);
+			case 3:
+				if (*read->d_name == '.')
+					continue;
+				printf("%s  \n", read->d_name);
 				break;
-
-			  default:
+			default:
 				break;
 			}
 		}
 	}
 	else
-	{
-		snprintf(perr, 50, "%s: cannot access %s", argv[0], argv[1]);
-		perror(perr);
-		exit(EXIT_FAILURE);
-	}
+		error_handler(argv);
 	closedir(dir);
-	return(0);
+	return (0);
+}
+
+/**
+ * error_handler - handles errors for hls
+ * @argv: arguments
+ * Return: 2 for failure
+ */
+void error_handler(char **argv)
+{
+	char perr[50];
+
+	if (errno == ENOENT)
+		snprintf(perr, 50, "%s: cannot access %s", argv[0], argv[1]);
+	else if (errno == EACCES)
+		sprintf(perr, "%s: cannot open directory %s", argv[0], argv[1]);
+	perror(perr);
+	exit(EXIT_FAILURE);
 }

@@ -15,9 +15,9 @@
 #include <errno.h>
 #include <string.h>
 
-
-
-
+int basic(char *filename, char **argv, int caseT);
+int ldetails(struct stat sb, struct dirent *read);
+void error_handler(char **argv);
 
 
 
