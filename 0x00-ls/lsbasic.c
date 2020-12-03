@@ -67,9 +67,10 @@ int main(int argc, char **argv)
 		
 			if (argc == 2)
 				filename = argv[1];
+		
 		}
-		if (nDir > 1)
-			printf("NDir: %d\n", nDir);
+		if (nDir == 1)
+			basic(argv[1], *argv, 1);
 	}
 		
 	
