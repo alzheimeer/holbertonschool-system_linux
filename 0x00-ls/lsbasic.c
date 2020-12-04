@@ -132,7 +132,7 @@ int basic(char *filename, char **argv, int caseT,
 		}
 	}
 	else
-		error_handler(argv);
+		error_handler(argv, filename, 0);
 	closedir(dir);
 	return (0);
 }
@@ -166,22 +166,33 @@ void cases(char **argv, int i, int *pila, int *hidden, int *longd)
 	else if (_strcmp(argv[i], "-R") == 0)
 		printf("task 10:Recursion\n");
 	else
-		printf("Opcion Erronea\n");
+		error_handler(argv, "./", 1);
 }
 
 /**
  * error_handler - handles errors for hls
  * @argv: arguments
+ * @filename: path
+ * @c: option error
  * Return: 2 for failure
  */
-void error_handler(char **argv)
+void error_handler(char **argv, char *filename, int c)
 {
 	char perr[50];
 
-	if (errno == ENOENT)
-		sprintf(perr, "%s: cannot access %s", argv[0], argv[1]);
-	else if (errno == EACCES)
-		sprintf(perr, "%s: cannot open directory %s", argv[0], argv[1]);
-	perror(perr);
-	exit(EXIT_FAILURE);
+	if (c == 1)
+	{
+		fprintf(stderr, "hls: invalid option -- '%c'\n", argv[1][1]);
+		fprintf(stderr, "Try 'hls --help' for more information.\n");
+		exit(EXIT_FAILURE);
+	}
+	else
+	{
+		if (errno == ENOENT)
+			sprintf(perr, "hls: cannot access %s", filename);
+		else if (errno == EACCES)
+			sprintf(perr, "hls: cannot open directory %s", filename);
+		perror(perr);
+		exit(EXIT_FAILURE);
+	}
 }

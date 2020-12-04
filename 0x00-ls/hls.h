@@ -18,7 +18,7 @@
 int basic(char *filename, char **argv, int caseT,
 	int pila, int hidden, int longd);
 int ldetails(struct stat sb, struct dirent *read);
-void error_handler(char **argv);
+void error_handler(char **argv, char *filename, int c);
 void cases(char **argv, int i,
 	int *pila, int *hidden, int *longd);
 int _strcmp(char *s1, char *s2);
