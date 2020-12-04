@@ -15,12 +15,19 @@
 #include <errno.h>
 #include <string.h>
 
-int basic(char *filename, char **argv, int caseT,
-	int pila, int hidden, int longd);
+int basic(char *filename, char **argv,
+		  int pila, int hidden, int longd, int hidden2,
+		  int reverse, int sortsize, int sorttime, int recursion);
+
 int ldetails(struct stat sb, struct dirent *read);
+
 void error_handler(char **argv, char *filename, int c);
-void cases(char **argv, int i,
-	int *pila, int *hidden, int *longd);
-int _strcmp(char *s1, char *s2);
+
+void cases(char **argv, int i, int *pila, int *hidden,
+	int *longd, int *hidden2, int *reverse, int *sortsize,
+	int *sorttime, int *recursion);
+
+void flaqs(struct stat sb, struct dirent *read, int pila, int longd,
+	int hidden2, int reverse, int sortsize, int sorttime, int recursion);
 
 #endif /* B79F7134_C774_433E_A9D1_31DF1009321A */

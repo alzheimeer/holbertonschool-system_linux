@@ -9,15 +9,18 @@
 int main(int argc, char **argv)
 {
 	int i, nDir = 0, pila = 0, hidden = 0, longd = 0;
+	int hidden2 = 0, reverse = 0, sortsize = 0, sorttime = 0, recursion = 0;
 
 	if (argc == 1)
-		basic("./", argv, 2, pila, hidden, longd);
+		basic("./", argv, pila, hidden, longd,
+			hidden2, reverse, sortsize, sorttime, recursion);
 	else
 	{
 		for (i = 1; i < argc; i++)
 		{
 			if (argv[i][0] == '-')
-				cases(argv, i, &pila, &hidden, &longd);
+				cases(argv, i, &pila, &hidden, &longd,
+					&hidden2, &reverse, &sortsize, &sorttime, &recursion);
 			else
 				nDir++;
 		}
@@ -28,25 +31,24 @@ int main(int argc, char **argv)
 				if (nDir == 1)
 				{
 					if (argv[i][0] != '-')
-						basic(argv[i], argv, 2, pila, hidden, longd);
+						basic(argv[i], argv, pila, hidden, longd,
+							hidden2, reverse, sortsize, sorttime, recursion);
 				}
 				else
 				{
 					if (argv[i][0] != '-')
 					{
 						printf("%s:\n", argv[i]);
-						basic(argv[i], argv, 2, pila, hidden, longd);
-					}
+						basic(argv[i], argv, pila, hidden, longd,
+							hidden2, reverse, sortsize, sorttime, recursion);	}
 					if (i < argc - 1)
-						printf("\n");
-				}
+						printf("\n");	}
 			}
 		}
 		else
-			basic("./", argv, 2, pila, hidden, longd);
-	}
-	return (0);
-}
+			basic("./", argv, pila, hidden, longd,
+				hidden2, reverse, sortsize, sorttime, recursion);	}
+	return (0);	}
 
 /**
  * ldetails - check the code for Holberton School students.
@@ -86,14 +88,20 @@ int ldetails(struct stat sb, struct dirent *read)
  * basic - check the code for Holberton School students.
  * @filename: number the arguments
  * @argv:  fdsfsfsfs
- * @caseT: fsdfsdfsdf
  * @pila: flag -1
  * @hidden: flaq -a
  * @longd: flag -l
- * Return: Always 0.
+ * @pila: flag -1
+ * @hidden2: flaq -A
+ * @reverse: flag -r
+ * @sortsize: flag -S
+ * @sorttime: flaq -t
+ * @recursion: flag -R
+ * Return: 0.
  */
-int basic(char *filename, char **argv, int caseT,
-		  int pila, int hidden, int longd)
+int basic(char *filename, char **argv,
+		  int pila, int hidden, int longd, int hidden2,
+		  int reverse, int sortsize, int sorttime, int recursion)
 {
 	char sal[128];
 	struct stat sb;
@@ -111,24 +119,11 @@ int basic(char *filename, char **argv, int caseT,
 				perror("stat");
 				return (errno);
 			}
-			switch (caseT)
-			{
-			case 2:
-				if (hidden == 0)
-					if (*read->d_name == '.')
-						continue;
-				if (longd == 0 && pila == 1)
-					printf("%s", read->d_name);
-				else if (longd == 0 && pila == 0)
-					printf("%s  ", read->d_name);
-				if (longd == 1)
-					ldetails(sb, read);
-				if (pila == 1)
-					printf("\n");
-				break;
-			default:
-				break;
-			}
+			if (hidden == 0)
+				if (*read->d_name == '.')
+					continue;
+			flaqs(sb, read, pila, longd, hidden2,
+				reverse, sortsize, sorttime, recursion);
 		}
 	}
 	else
@@ -143,30 +138,56 @@ int basic(char *filename, char **argv, int caseT,
  * @pila: flag -1
  * @hidden: flaq -a
  * @longd: flag -l
+ * @hidden2: flaq -A
+ * @reverse: flag -r
+ * @sortsize: flag -S
+ * @sorttime: flaq -t
+ * @recursion: flag -R
  * Return: none
  */
-void cases(char **argv, int i, int *pila, int *hidden, int *longd)
+void cases(char **argv, int i, int *pila, int *hidden,
+	int *longd, int *hidden2, int *reverse, int *sortsize,
+	int *sorttime, int *recursion)
 {
-	if (_strcmp(argv[i], "-1") == 0)
-		*pila = 1;
-	else if (_strcmp(argv[i], "-a") == 0)
-		*hidden = 1;
-	else if (_strcmp(argv[i], "-A") == 0)
-		printf("task 4: ver archivos Horizontales + Ocultos y sin . y ..\n");
-	else if (_strcmp(argv[i], "-l") == 0)
-		*longd = 1;
-	else if (_strcmp(argv[i], "-lA") == 0 || _strcmp(argv[i], "-Al") == 0)
-		printf("task 6 combina -lA -Al -la  -al \n");
-	else if (_strcmp(argv[i], "-r") == 0)
-		printf("task 7: reverso\n");
-	else if (_strcmp(argv[i], "-S") == 0)
-		printf("task 8: ordena por tamaño\n");
-	else if (_strcmp(argv[i], "-t") == 0)
-		printf("task 9: ordena por tiempo\n");
-	else if (_strcmp(argv[i], "-R") == 0)
-		printf("task 10:Recursion\n");
-	else
-		error_handler(argv, "./", 1);
+	int j = 0;
+
+	if (!argv[i][1])
+		basic("-", argv, 0, 0, 0, 0, 0, 0, 0, 0);
+	while (argv[i][j])
+		j++;
+	for (j = j - 1; j > 0; j--)
+	{
+		switch (argv[i][j])
+			{
+			case '1':
+				*pila = 1;
+				break;
+			case 'a':
+				*hidden = 1;
+				break;
+			case 'A':
+				*hidden2 = 1;
+				break;
+			case 'l':
+				*longd = 1;
+				break;
+			case 'r':
+				*reverse = 1;
+				break;
+			case 'S':
+				*sortsize = 1;
+				break;
+			case 't':
+				*sorttime = 1;
+				break;
+			case 'R':
+				*recursion  = 1;
+				break;
+			default:
+				error_handler(argv, "./", 1);
+				break;
+			}
+		}
 }
 
 /**
