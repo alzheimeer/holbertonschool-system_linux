@@ -99,7 +99,6 @@ int basic(char *filename, char **argv, int caseT, int pila,  int hidden, int lon
 	struct dirent *read;
 	DIR *dir;
 
-	printf("PRUEBA FILENAME: %s\n", filename);
 	dir = opendir(filename);
 	if (dir != NULL)
 	{
