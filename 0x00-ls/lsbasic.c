@@ -113,8 +113,6 @@ int basic(char *filename, char **argv, int caseT,
 			}
 			switch (caseT)
 			{
-			case 1:
-				break;
 			case 2:
 				if (hidden == 0)
 					if (*read->d_name == '.')
