@@ -105,7 +105,7 @@ int basic(char *filename, char **argv, int caseT,
 	{
 		while ((read = readdir(dir)) != NULL)
 		{
-			snprintf(sal, 128, "%s/%s", filename, read->d_name);
+			sprintf(sal, "%s/%s", filename, read->d_name);
 			if (lstat(sal, &sb) == -1)
 			{
 				perror("stat");
@@ -179,7 +179,7 @@ void error_handler(char **argv)
 	char perr[50];
 
 	if (errno == ENOENT)
-		snprintf(perr, 50, "%s: cannot access %s", argv[0], argv[1]);
+		sprintf(perr, "%s: cannot access %s", argv[0], argv[1]);
 	else if (errno == EACCES)
 		sprintf(perr, "%s: cannot open directory %s", argv[0], argv[1]);
 	perror(perr);
