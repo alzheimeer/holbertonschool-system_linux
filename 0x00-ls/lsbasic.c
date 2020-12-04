@@ -114,7 +114,6 @@ int basic(char *filename, char **argv, int caseT, int pila,  int hidden, int lon
 			switch (caseT)
 			{
 			case 1:
-				ldetails(sb, read);
 				break;
 			case 2:
 				if (hidden == 0)
