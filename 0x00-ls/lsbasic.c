@@ -119,7 +119,9 @@ int basic(char *filename, char **argv, int caseT,
 				if (hidden == 0)
 					if (*read->d_name == '.')
 						continue;
-				if (longd == 0)
+				if (longd == 0 && pila == 1)
+					printf("%s", read->d_name);
+				else if (longd == 0 && pila == 0)
 					printf("%s  ", read->d_name);
 				if (longd == 1)
 					ldetails(sb, read);
