@@ -38,7 +38,7 @@ int main(int argc, char **argv)
 						basic(argv[i], argv, 2, pila, hidden, longd);
 					}
 					if (i < argc - 1)
-						printf("\n"), printf("\n");
+						printf("\n");
 				}
 			}
 		}
