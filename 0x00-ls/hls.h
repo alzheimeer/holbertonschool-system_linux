@@ -15,9 +15,10 @@
 #include <errno.h>
 #include <string.h>
 
-int basic(char *filename, char **argv, int caseT);
+int basic(char *filename, char **argv, int caseT, int pila,  int hidden, int longd);
 int ldetails(struct stat sb, struct dirent *read);
 void error_handler(char **argv);
+void cases(char **argv, int i, int *pila, int *hidden, int *longd);
 
 
 

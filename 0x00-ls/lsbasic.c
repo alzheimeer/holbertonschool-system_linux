@@ -8,40 +8,45 @@
  */
 int main(int argc, char **argv)
 {
-	int i, nDir = 0;
+	int i, nDir = 0, pila = 0, hidden = 0, longd = 0;
 
 	if (argc == 1)
-		basic("./", argv, 2);
+		basic("./", argv, 2, pila, hidden, longd);
 	else
 	{
 		for (i = 1; i < argc; i++)
 		{
 			if (argv[i][0] == '-')
-			{
-				if (strcmp(argv[i], "-1") == 0)
-					basic("./", argv, 3);
-				else if (strcmp(argv[i], "-a") == 0)
-					printf("task 3: ver archivos Horizontales + Ocultos\n");
-				else if (strcmp(argv[i], "-A") == 0)
-					printf("task 4: ver archivos Horizontales + Ocultos y sin . y ..\n");
-				else if (strcmp(argv[i], "-l") == 0)
-					printf("task 5: todos los formatos\n");
-				else if (strcmp(argv[i], "-lA") == 0 || strcmp(argv[i], "-Al") == 0)
-					printf("task 6 combina -lA -Al -la  -al \n");
-				else if (strcmp(argv[i], "-r") == 0)
-					printf("task 7: reverso\n");
-				else if (strcmp(argv[i], "-S") == 0)
-					printf("task 8: ordena por tamaño\n");
-				else if (strcmp(argv[i], "-t") == 0)
-					printf("task 9: ordena por tiempo\n");
-				else if (strcmp(argv[i], "-R") == 0)
-					printf("task 10:Recursion\n");
-				else
-					printf("Opcion Erronea\n");
-			}
+				cases(argv, i, &pila, &hidden, &longd);
 			else
 				nDir++;
 		}
+		if (nDir > 0)
+		{
+			for (i = 1; i < argc; i++)
+			{	
+				if (nDir == 1)
+				{
+					if (argv[i][0] != '-')
+						basic(argv[i], argv, 2, pila, hidden, longd);
+				}
+				else
+				{
+					if (argv[i][0] != '-')
+					{
+						printf("%s:\n", argv[i]);
+						basic(argv[i], argv, 2, pila, hidden, longd);
+					}
+					if (i < argc - 1)
+					{
+						printf("\n");
+						printf("\n");
+					}
+				}
+			}	
+		}
+		else
+			basic("./", argv, 2, pila, hidden, longd);
 	}
 	return (0);
 }
@@ -87,13 +92,14 @@ int ldetails(struct stat sb, struct dirent *read)
  * @caseT: fsdfsdfsdf
  * Return: Always 0.
  */
-int basic(char *filename, char **argv, int caseT)
+int basic(char *filename, char **argv, int caseT, int pila,  int hidden, int longd)
 {
 	char sal[50];
 	struct stat sb;
 	struct dirent *read;
 	DIR *dir;
 
+	printf("PRUEBA FILENAME: %s\n", filename);
 	dir = opendir(filename);
 	if (dir != NULL)
 	{
@@ -111,14 +117,17 @@ int basic(char *filename, char **argv, int caseT)
 				ldetails(sb, read);
 				break;
 			case 2:
-				if (*read->d_name == '.')
-					continue;
-				printf("%s  ", read->d_name);
-				break;
-			case 3:
-				if (*read->d_name == '.')
-					continue;
-				printf("%s  \n", read->d_name);
+				if (hidden == 0)
+				{
+					if (*read->d_name == '.')
+						continue;
+				}
+				if (longd == 0)	
+					printf("%s  ", read->d_name);
+				if (longd == 1)
+					ldetails(sb, read);
+				if (pila == 1)
+					printf("\n");
 				break;
 			default:
 				break;
@@ -129,6 +138,35 @@ int basic(char *filename, char **argv, int caseT)
 		error_handler(argv);
 	closedir(dir);
 	return (0);
+}
+/**
+ * cases - handles errors for hls
+ * @argv: arguments
+ * @i: iterable
+ * Return: none
+ */
+void cases(char **argv, int i, int *pila, int *hidden, int *longd)
+{
+	if (strcmp(argv[i], "-1") == 0)
+		*pila = 1;
+	else if (strcmp(argv[i], "-a") == 0)
+		*hidden = 1;
+	else if (strcmp(argv[i], "-A") == 0)
+		printf("task 4: ver archivos Horizontales + Ocultos y sin . y ..\n");
+	else if (strcmp(argv[i], "-l") == 0)
+		*longd = 1;
+	else if (strcmp(argv[i], "-lA") == 0 || strcmp(argv[i], "-Al") == 0)
+		printf("task 6 combina -lA -Al -la  -al \n");
+	else if (strcmp(argv[i], "-r") == 0)
+		printf("task 7: reverso\n");
+	else if (strcmp(argv[i], "-S") == 0)
+		printf("task 8: ordena por tamaño\n");
+	else if (strcmp(argv[i], "-t") == 0)
+		printf("task 9: ordena por tiempo\n");
+	else if (strcmp(argv[i], "-R") == 0)
+		printf("task 10:Recursion\n");
+	else
+		printf("Opcion Erronea\n");
 }
 
 /**
