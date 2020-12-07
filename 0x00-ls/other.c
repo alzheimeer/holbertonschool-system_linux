@@ -120,6 +120,7 @@ void betty(int i, int argc, int nDir, char **argv,
 		if (i < argc - 1)
 			printf("\n");
 	}
+	closedir(dir);
 }
 /**
  * _strcmp - Compare two strings
@@ -149,8 +150,8 @@ int _strcmp(char *s1, char *s2)
 char *_strtok(char *s, const char *delim)
 {
 	char *token;
-	static int tok_s;
-	static char *buftok;
+	int tok_s;
+	char *buftok;
 
 	if (s != NULL)
 	{
