@@ -28,21 +28,8 @@ int main(int argc, char **argv)
 		{
 			for (i = 1; i < argc; i++)
 			{
-				if (nDir == 1)
-				{
-					if (argv[i][0] != '-')
-						basic(argv[i], argv, pila, hidden, longd,
-							hidden2, reverse, sortsize, sorttime, recursion);
-				}
-				else
-				{
-					if (argv[i][0] != '-')
-					{
-						printf("%s:\n", argv[i]);
-						basic(argv[i], argv, pila, hidden, longd,
-							hidden2, reverse, sortsize, sorttime, recursion);	}
-					if (i < argc - 1)
-						printf("\n");	}
+				if (argv[i][0] != '-')
+					betty(i, argc, nDir, argv, pila, hidden, longd, hidden2);
 			}
 		}
 		else
@@ -119,11 +106,22 @@ int basic(char *filename, char **argv,
 				perror("stat");
 				return (errno);
 			}
-			if (hidden == 0)
+
+			if (hidden == 0 && hidden2 == 0)
+			{
 				if (*read->d_name == '.')
 					continue;
-			flaqs(sb, read, pila, longd, hidden2,
+			}
+			if (hidden == 0 && hidden2 == 1)
+			{
+				if (_strcmp(".", read->d_name) == 0 ||
+					_strcmp("..", read->d_name) == 0)
+					continue;
+			}
+			flaqs(sb, read, pila, longd,
 				reverse, sortsize, sorttime, recursion);
+			if (pila == 1)
+				printf("\n");
 		}
 	}
 	else
@@ -131,6 +129,7 @@ int basic(char *filename, char **argv,
 	closedir(dir);
 	return (0);
 }
+
 /**
  * cases - handles errors for hls
  * @argv: arguments
