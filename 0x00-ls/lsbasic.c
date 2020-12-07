@@ -73,6 +73,7 @@ int ldetails(struct stat sb, struct dirent *read)
 	printf("%c", (sb.st_mode & S_IWOTH) ? 'w' : '-');
 	printf("%c", (sb.st_mode & S_IXOTH) ? 'x' : '-');
 
+	printf(" %ld", (long) sb.st_nlink);
 	pw = getpwuid(sb.st_uid);
 	grp = getgrgid(sb.st_gid);
 	printf(" %s %s ", pw->pw_name, grp->gr_name);
