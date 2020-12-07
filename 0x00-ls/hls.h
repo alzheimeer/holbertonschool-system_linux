@@ -30,4 +30,6 @@ void cases(char **argv, int i, int *pila, int *hidden,
 void flaqs(struct stat sb, struct dirent *read, int pila, int longd,
 	int hidden2, int reverse, int sortsize, int sorttime, int recursion);
 
+int _strcmp(char *s1, char *s2);
+
 #endif /* B79F7134_C774_433E_A9D1_31DF1009321A */

@@ -119,9 +119,17 @@ int basic(char *filename, char **argv,
 				perror("stat");
 				return (errno);
 			}
-			if (hidden == 0)
+			if (hidden == 0 && hidden2 == 0)
+			{
 				if (*read->d_name == '.')
 					continue;
+			}
+			if (hidden == 0 && hidden2 == 1)
+			{
+				if (_strcmp(".", read->d_name) == 0 ||
+					_strcmp("..", read->d_name) == 0)
+					continue;
+			}
 			flaqs(sb, read, pila, longd, hidden2,
 				reverse, sortsize, sorttime, recursion);
 		}
