@@ -14,6 +14,8 @@ void race_state(int *id, size_t size)
 	int exists;
 	size_t i, j;
 
+	if (!size)
+		return;
 	for (i = 0; i < size; i++)
 	{
 		exists = 0;
@@ -39,8 +41,6 @@ void race_state(int *id, size_t size)
 	{
 		printf("Car %d [%d laps]\n", cars[j], laps[j]);
 	}
-	if (size == 0)
-		printf("--\n");
 }
 /**
  * sort - sort cars.
