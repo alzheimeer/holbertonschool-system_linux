@@ -6,8 +6,7 @@
  * Return: always 0.
  */
 char *_getline(const int fd)
-{
-	char *line, *buf;
+{	char *line, *buf;
 	static char *line1;
 	static int i, count_size, j, x, new;
 	int n = 0, k = 0, n_read = 1, f = 0, size = READ_SIZE, oldsize = 0;
@@ -21,7 +20,7 @@ char *_getline(const int fd)
 	while (n_read)
 	{	n_read = read(fd, buf, READ_SIZE);
 		if (n_read > 0)
-		{	
+		{
 			line1 = _realloc(line1, oldsize, size);
 			oldsize = size;
 			if (f == 0)
@@ -49,8 +48,6 @@ char *_getline(const int fd)
 	i = i + 1, j = i, free(buf);
 	return (line);
 }
-
-
 /**
  * _realloc - realloc() implementation, but different prototype
  * @ptr: pointer to the memory
