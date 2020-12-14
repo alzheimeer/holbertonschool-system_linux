@@ -9,5 +9,6 @@
 #define READ_SIZE 1
 
 char *_getline(const int fd);
+void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size);
 
 #endif /*INC_0X01_GETLINE_GETLINE_H*/
