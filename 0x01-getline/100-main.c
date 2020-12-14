@@ -14,29 +14,29 @@
  */
 int main(void)
 {
-    int fd;
-    char *line;
-    int i;
+	int fd;
+	char *line;
+	int i;
 
-    fd = open("zero", O_RDONLY);
-    if (-1 == fd)
-    {
-        fprintf(stderr, "nop\n");
-        return (EXIT_FAILURE);
-    }
-    while ((line = _getline(fd)))
-    {
-        for (i = 0; i < LINE_LEN; i++)
-        {
-            if (i)
-            {
-                printf(" ");
-            }
-            printf("%02x", line[i]);
-        }
-        printf("\n");
-        free(line);
-    }
-    close(fd);
-    return (EXIT_SUCCESS);
+	fd = open("zero", O_RDONLY);
+	if (-1 == fd)
+	{
+		fprintf(stderr, "nop\n");
+		return (EXIT_FAILURE);
+	}
+	while ((line = _getline(fd)))
+	{
+		for (i = 0; i < LINE_LEN; i++)
+		{
+			if (i)
+			{
+				printf(" ");
+			}
+			printf("%02x", line[i]);
+		}
+		printf("\n");
+		free(line);
+	}
+	close(fd);
+	return (EXIT_SUCCESS);
 }
