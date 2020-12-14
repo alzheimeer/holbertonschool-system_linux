@@ -6,7 +6,7 @@
 #include <string.h>
 #include <stdio.h>
 
-#define READ_SIZE 1024
+#define READ_SIZE 1
 
 char *_getline(const int fd);
 
