@@ -68,7 +68,7 @@ char *_getline(const int fd)
 	if (i[idx] == count_size[idx])
 	{
 		free(dfd[idx]), free(buf), x = 1;
-		return (LINE); /*DEBERIA SER line*/
+		return (line); /*DEBERIA SER line*/
 	}
 	i[idx] = i[idx] + 1, j[idx] = i[idx], free(buf);
 	return (line);
