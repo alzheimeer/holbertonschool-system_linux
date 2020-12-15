@@ -44,7 +44,7 @@ char *_getline(const int fd)
 		line[k] = line1[j], k++;
 	if (i == count_size)
 	{	free(line1), free(buf), i = 0, count_size = 0, j = 0, x = 1;
-		return (line);	}
+		return (NULL);	}
 	i = i + 1, j = i, free(buf);
 	return (line);
 }
