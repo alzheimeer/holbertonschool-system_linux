@@ -6,7 +6,7 @@
 #include <string.h>
 #include <stdio.h>
 
-#define READ_SIZE 1
+#define READ_SIZE 1024
 
 char *_getline(const int fd);
 void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size);

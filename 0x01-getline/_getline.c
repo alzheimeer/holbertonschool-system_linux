@@ -6,46 +6,71 @@
  * Return: always 0.
  */
 char *_getline(const int fd)
-{	char *line, *buf;
-	static char *line1;
-	static int i, count_size, j, x, new;
-	int n = 0, k = 0, n_read = 1, f = 0, size = READ_SIZE, oldsize = 0;
+{
+	char *line, *buf;
+	static char *dfd[10];
+	static int x;
+	static int nfd[10], i[10], j[10], count_size[10];
+	int num = 0, existe = 0, idx = 0, b = 0, oldsize = 0;
+	int n = 0, k = 0, n_read = 1, f = 0, size = READ_SIZE;
 
-	if (fd != new)
-		free(line1), line1 = NULL, i = 0, count_size = 0, j = 0;
+	if (fd == -1)
+	{
+		x = 0, memset(nfd, 0, 10), memset(i, 0, 10);
+		memset(j, 0, 10), memset(count_size, 0, 10);
+		while (num < 10)
+			dfd[num] = NULL, num++;
+		return (NULL);
+	}
+	while (num < 10)
+	{
+		if (nfd[num] == fd)
+			existe = 1, idx = num;
+		if (nfd[num] != 0)
+			b++;
+		num++;
+	}
+	if (existe == 0)
+		idx = b;
+	nfd[idx] = fd;
 	if (x == 1)
-	{	x = 0;
-		return (NULL);	}
+	{
+		x = 0;
+		return (NULL);
+	}
 	buf = malloc(READ_SIZE);
 	while (n_read)
-	{	n_read = read(fd, buf, READ_SIZE);
+	{
+		n_read = read(nfd[idx], buf, READ_SIZE);
 		if (n_read > 0)
 		{
-			line1 = _realloc(line1, oldsize, size);
+			dfd[idx] = _realloc(dfd[idx], oldsize, size);
 			oldsize = size;
 			if (f == 0)
-				memcpy(line1, buf, n_read);
+				memcpy(dfd[idx], buf, n_read);
 			else
-				memcpy(line1 + count_size, buf, n_read);
-			size = size + READ_SIZE;	}
-		f++, count_size = n_read + count_size;
+				memcpy(dfd[idx] + count_size[idx], buf, n_read);
+			size = size + READ_SIZE;
+		}
+		f++;
+		count_size[idx] = n_read + count_size[idx];
 	}
-	if (n_read == 0)
-		new = fd;
-	while (line1[i] != '\n' && i != count_size)
-		i++;
-	if (i == j)
+	while (dfd[idx][i[idx]] != '\n' && i[idx] != count_size[idx])
+		i[idx]++;
+	if (i[idx] == j[idx])
 		n = 0;
 	else
-		n = i - j;
+		n = i[idx] - j[idx];
 	line = malloc(n + 1);
 	memset(line, 0, n + 1);
-	for (; j < i; j++)
-		line[k] = line1[j], k++;
-	if (i == count_size)
-	{	free(line1), free(buf), i = 0, count_size = 0, j = 0, x = 1;
-		return (NULL);	}
-	i = i + 1, j = i, free(buf);
+	for (; j[idx] < i[idx]; j[idx]++)
+		line[k] = dfd[idx][j[idx]], k++;
+	if (i[idx] == count_size[idx])
+	{
+		free(dfd[idx]), free(buf), x = 1;
+		return (NULL); /*DEBERIA SER line*/
+	}
+	i[idx] = i[idx] + 1, j[idx] = i[idx], free(buf);
 	return (line);
 }
 /**
