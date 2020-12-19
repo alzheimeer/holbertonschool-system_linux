@@ -1,85 +1,87 @@
 #include "_getline.h"
-
+#define OLD_SIZE (current_file->old_size)
+#define NEW_SIZE (readed + OLD_SIZE)
+#define CLEAN_CUR_O (free(current_file->output), current_file->output = NULL)
+static streamf *file, *current_file;
 /**
- * _getline - reads an entire line from a file descriptor.
- * @fd: is the file descriptor to read from
- * Return: always 0.
+ * _getline - Gets a line from an input
+ * @fd: file descriptor number
+ *
+ * Return: pointer to the memory
  */
 char *_getline(const int fd)
 {
-	char *line, *buf;
-	static char *dfd[10];
-	static int x;
-	static int nfd[10], i[10], j[10], count_size[10];
-	int num = 0, existe = 0, idx = 0, b = 0, oldsize = 0;
-	int n = 0, k = 0, n_read = 1, f = 0, size = READ_SIZE;
+	int readed = 0, index = 0;
+	char buffer[READ_SIZE], *line = NULL, *temp = NULL;
 
 	if (fd == -1)
 	{
-		x = 0, memset(nfd, 0, 10), memset(i, 0, 10);
-		memset(j, 0, 10), memset(count_size, 0, 10);
-		while (num < 10)
-			dfd[num] = NULL, num++;
+		clean_files();
 		return (NULL);
 	}
-	while (num < 10)
-	{
-		if (nfd[num] == fd)
-			existe = 1, idx = num;
-		if (nfd[num] != 0)
-			b++;
-		num++;
-	}
-	if (existe == 0)
-		idx = b;
-	nfd[idx] = fd;
-	if (x == 1)
-	{
-		x = 0;
+	if (!handlefd(fd))
 		return (NULL);
-	}
-	buf = malloc(READ_SIZE);
-	while (n_read)
-	{
-		n_read = read(nfd[idx], buf, READ_SIZE);
-		if (n_read > 0)
+	do {
+		readed = read(current_file->fd, &buffer, READ_SIZE);
+		if (readed == -1)
+			return (NULL);
+		if (readed)
 		{
-			dfd[idx] = _realloc(dfd[idx], oldsize, size);
-			oldsize = size;
-			if (f == 0)
-				memcpy(dfd[idx], buf, n_read);
-			else
-				memcpy(dfd[idx] + count_size[idx], buf, n_read);
-			size = size + READ_SIZE;
+			temp = _realloc(current_file->output, OLD_SIZE, NEW_SIZE);
+			if (temp == NULL)
+				return (NULL);
+			current_file->output = temp;
+			memcpy(current_file->output + OLD_SIZE, buffer, readed);
+			OLD_SIZE = NEW_SIZE;
 		}
-		f++;
-		count_size[idx] = n_read + count_size[idx];
-	}
-	while (dfd[idx][i[idx]] != '\n' && i[idx] != count_size[idx])
-		i[idx]++;
-	if (i[idx] == j[idx])
-		n = 0;
-	else
-		n = i[idx] - j[idx];
-	line = malloc(n + 1);
-	memset(line, 0, n + 1);
-	for (; j[idx] < i[idx]; j[idx]++)
-		line[k] = dfd[idx][j[idx]], k++;
-	if (i[idx] == count_size[idx])
+		index = getindex(current_file->output, 10);
+	} while (readed == READ_SIZE && index == -1);
+	if (index != -1 && current_file->output)
+		return (split_line(index));
+	if (OLD_SIZE)
 	{
-		free(dfd[idx]), free(buf), x = 1;
-		return (line); /*DEBERIA SER line*/
+		line = malloc(OLD_SIZE + 1);
+		if (line == NULL)
+			return (NULL);
+		memcpy(line, current_file->output, OLD_SIZE), line[OLD_SIZE] = 0;
+		OLD_SIZE = 0, free(current_file->output), current_file->output = NULL;
+		return (line);
 	}
-	i[idx] = i[idx] + 1, j[idx] = i[idx], free(buf);
-	return (line);
+	if (!file->next)
+		CLEAN_CUR_O, free(file), file = NULL;
+	return (NULL);
 }
 /**
- * _realloc - realloc() implementation, but different prototype
- * @ptr: pointer to the memory
- * @old_size: old size of the block of memory
- * @new_size: new size of the block of memory
- * Return: new allocated memory block with data copied from previous location
- * NULL on failure
+ * getindex - search for a character inside an array
+ * @array: array to search the character from
+ * @chr: character to search for
+ * Return: index of the chr in array or -1 if not found
+ */
+int getindex(char *array, char chr)
+{
+	unsigned int index = 0, first_found = 1, ret_index = -1;
+
+	if (!array)
+		return (-1);
+	for (index = 0; index < OLD_SIZE; index++)
+	{
+		if (array[index] == chr)
+		{
+			if (first_found)
+			{
+				ret_index = index;
+				first_found = 0;
+			}
+		}
+	}
+	return (ret_index);
+}
+/**
+ *_realloc - array with the range of integer
+ *@ptr: array
+ *@old_size: old array sizee
+ *@new_size: new array size
+ *Return: int array with min to max
  */
 void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size)
 {
@@ -112,4 +114,91 @@ void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size)
 		array[i] = *((char *)ptr + i);
 	free(ptr);
 	return ((void *)array);
+}
+/**
+ *handlefd - returns saved stream or created stream if not found
+ *@fd: file descriptor number
+ *
+ *Return: NULL if something failed
+ *
+ */
+streamf *handlefd(unsigned int fd)
+{
+	streamf *initial = NULL;
+
+	current_file = file;
+	initial = file;
+	while (current_file)
+	{
+		if (fd == current_file->fd)
+			break;
+		current_file = current_file->next;
+	}
+	if (!current_file)
+	{
+		file = malloc(sizeof(streamf));
+		if (!file)
+			return (NULL);
+		file->next = initial;
+		file->fd = fd;
+		file->output = NULL;
+		file->old_size = 0;
+		current_file = file;
+	}
+	return (file);
+}
+/**
+ *split_line - split line until new line character is found
+ *@index: index of current solution
+ *
+ *Return: String used by split line
+ *
+ */
+char *split_line(int index)
+{
+	char *line = NULL, *temp = NULL;
+
+	line = malloc(index + 1);
+	if (line == NULL)
+		return (NULL);
+	memcpy(line, current_file->output, index);
+	line[index] = 0;
+	if (!OLD_SIZE)
+	{
+		free(current_file->output);
+		current_file->output = NULL;
+		current_file->old_size = 0;
+	}
+	else
+	{
+		OLD_SIZE = OLD_SIZE - index - 1;
+		temp = malloc(OLD_SIZE);
+		if (!temp)
+			return (NULL);
+		memcpy(temp, current_file->output + index + 1, OLD_SIZE);
+		free(current_file->output);
+		current_file->output = temp;
+	}
+	return (line);
+}
+/**
+ *clean_files - cleans all files allocs
+ */
+void clean_files(void)
+{
+	streamf *temp;
+
+	while (file)
+	{
+		temp = file->next;
+		if (file->output)
+		{
+			free(file->output);
+			file->output = NULL;
+		}
+		free(file);
+		file = temp;
+	}
+	current_file = NULL;
+	file = NULL;
 }
