@@ -51,7 +51,8 @@ def write_in_mem(pid, search_string, replace_string, ini, final):
         print(e) or exit(1)
 
 
-if len(argv) < 4 or len(argv[2]) < len(argv[3]):
-    print(msn) or exit(1)
-ini, final = search_in_maps(int(argv[1]))
-write_in_mem(int(argv[1]), argv[2], argv[3], ini, final)
+if __name__ == "__main__":
+    if len(argv) < 4 or len(argv[2]) < len(argv[3]):
+        print(msn) or exit(1)
+    ini, final = search_in_maps(int(argv[1]))
+    write_in_mem(int(argv[1]), argv[2], argv[3], ini, final)
