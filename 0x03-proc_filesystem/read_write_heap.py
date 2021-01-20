@@ -6,21 +6,23 @@ from sys import argv
 USAGE = "USAGE: read_write_heap.py pid search_string replace_string"
 
 
-def parse_maps_file(pid):
-    """parses /proc/PID/maps file for heap info"""
-    heap_start = heap_stop = None
+def search_in_maps(pid):
+    """search in maps file"""
+    ini = final = None
     try:
-        with open("/proc/{:d}/maps".format(pid), "r") as file:
-            for line in file:
-                if line.endswith("[heap]\n"):
-                    heap_start, heap_stop = \
-                        [int(x, 16) for x in line.split(" ")[0].split("-")]
+        with open("/proc/{:d}/maps".format(pid), "r") as maps:
+            for line in maps:
+                if "heap" in line:
+                    ini = line.split(" ")[0].split("-")[0]
+                    final = line.split(" ")[0].split("-")[1]
+                    ini = int(ini, 16)
+                    final = int(final, 16)
     except Exception as e:
         print(e) or exit(1)
-    if not heap_start or not heap_stop:
+    if not ini or not final:
         print("[ERROR] Heap address not found.") or exit(1)
-    print("[*] Heap starts at {:02X}".format(heap_start))
-    return heap_start, heap_stop
+    print("[*] Heap starts at {:02X}".format(ini))
+    return ini, final
 
 
 def update_mem_file(pid, search_string, replace_string, heap_start, heap_stop):
@@ -45,8 +47,8 @@ def update_mem_file(pid, search_string, replace_string, heap_start, heap_stop):
     except Exception as e:
         print(e) or exit(1)
 
-if __name__ == "__main__":
-    if len(argv) < 4 or len(argv[2]) < len(argv[3]):
-        print(USAGE) or exit(1)
-    heap_start, heap_stop = parse_maps_file(int(argv[1]))
-    update_mem_file(int(argv[1]), argv[2], argv[3], heap_start, heap_stop)
+
+if len(argv) < 4 or len(argv[2]) < len(argv[3]):
+    print(USAGE) or exit(1)
+heap_start, heap_stop = search_in_maps(int(argv[1]))
+update_mem_file(int(argv[1]), argv[2], argv[3], heap_start, heap_stop)
