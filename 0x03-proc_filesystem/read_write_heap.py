@@ -25,18 +25,18 @@ def search_in_maps(pid):
     return ini, final
 
 
-def update_mem_file(pid, search_string, replace_string, heap_start, heap_stop):
-    """finds search_string in /proc/PID/mem and writes replace_string"""
+def write_in_mem(pid, search_string, replace_string, ini, final):
+    """finds string in mem and replace string"""
     try:
         with open("/proc/{:d}/mem".format(pid), "r+b") as f:
-            f.seek(heap_start)
-            data = f.read(heap_stop - heap_start)
-            print("[*] Read {:d} bytes".format(heap_stop - heap_start))
+            f.seek(ini)
+            data = f.read(final - ini)
+            print("[*] Read {:d} bytes".format(final - ini))
             string_offset = data.find(search_string.encode())
             if string_offset > -1:
                 print("[*] String found at {:02X}"
-                      .format(heap_start + string_offset))
-                f.seek(heap_start + string_offset)
+                      .format(ini + string_offset))
+                f.seek(ini + string_offset)
                 written = f.write(replace_string.encode() + b'\x00')
                 print("[*] {:d} bytes written!".format(written))
             else:
@@ -50,5 +50,5 @@ def update_mem_file(pid, search_string, replace_string, heap_start, heap_stop):
 
 if len(argv) < 4 or len(argv[2]) < len(argv[3]):
     print(USAGE) or exit(1)
-heap_start, heap_stop = search_in_maps(int(argv[1]))
-update_mem_file(int(argv[1]), argv[2], argv[3], heap_start, heap_stop)
+ini, final = search_in_maps(int(argv[1]))
+write_in_mem(int(argv[1]), argv[2], argv[3], ini, final)
