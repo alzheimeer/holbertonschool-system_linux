@@ -1,3 +1,6 @@
+#!/usr/bin/python3
+"""Finds & overwrites a string in a process' mem file"""
+
 from sys import argv
 
 USAGE = "USAGE: read_write_heap.py pid search_string replace_string"
