@@ -1,46 +1,38 @@
-#!/usr/bin/python3
-"""overwrite a string in a process"""
-
 from sys import argv
 
-msn = "USAGE: read_write_heap.py pid search_string replace_string"
+USAGE = "USAGE: read_write_heap.py pid search_string replace_string"
 
 
-def search_in_maps(pid):
-    """search in maps file"""
-    ini = final = None
+def parse_maps_file(pid):
+    """parses /proc/PID/maps file for heap info"""
+    heap_start = heap_stop = None
     try:
-        with open("/proc/{:d}/maps".format(pid), "r") as maps:
-            for line in maps:
-                if "heap" in line:
-                    ini = line.split(" ")[0].split("-")[0]
-                    final = line.split(" ")[0].split("-")[1]
-                    ini = int(ini, 16)
-                    final = int(final, 16)
+        with open("/proc/{:d}/maps".format(pid), "r") as file:
+            for line in file:
+                if line.endswith("[heap]\n"):
+                    heap_start, heap_stop = \
+                        [int(x, 16) for x in line.split(" ")[0].split("-")]
     except Exception as e:
         print(e) or exit(1)
-    if not ini or not final:
+    if not heap_start or not heap_stop:
         print("[ERROR] Heap address not found.") or exit(1)
-    print("[*] Heap starts at {:02X}".format(ini))
-    return ini, final
+    print("[*] Heap starts at {:02X}".format(heap_start))
+    return heap_start, heap_stop
 
 
-def write_in_mem(pid, search_string, replace_string, ini, final):
-    """finds string in mem and replace string"""
+def update_mem_file(pid, search_string, replace_string, heap_start, heap_stop):
+    """finds search_string in /proc/PID/mem and writes replace_string"""
     try:
-        with open("/proc/{:d}/mem".format(pid), "r+b") as mem:
-            # read heap
-            mem.seek(ini)
-            numbytes = final - ini
-            data = mem.read(numbytes)
-            print("[*] Read {:d} bytes".format(numbytes))
-            # find string
-            i = data.index(bytes(search_string, "ASCII"))
-            if i > -1:
+        with open("/proc/{:d}/mem".format(pid), "r+b") as f:
+            f.seek(heap_start)
+            data = f.read(heap_stop - heap_start)
+            print("[*] Read {:d} bytes".format(heap_stop - heap_start))
+            string_offset = data.find(search_string.encode())
+            if string_offset > -1:
                 print("[*] String found at {:02X}"
-                      .format(ini + i))
-                mem.seek(ini + i)
-                written = mem.write(bytes(replace_string, "ASCII"))
+                      .format(heap_start + string_offset))
+                f.seek(heap_start + string_offset)
+                written = f.write(replace_string.encode() + b'\x00')
                 print("[*] {:d} bytes written!".format(written))
             else:
                 print(
@@ -50,9 +42,8 @@ def write_in_mem(pid, search_string, replace_string, ini, final):
     except Exception as e:
         print(e) or exit(1)
 
-
 if __name__ == "__main__":
     if len(argv) < 4 or len(argv[2]) < len(argv[3]):
-        print(msn) or exit(1)
-    ini, final = search_in_maps(int(argv[1]))
-    write_in_mem(int(argv[1]), argv[2], argv[3], ini, final)
+        print(USAGE) or exit(1)
+    heap_start, heap_stop = parse_maps_file(int(argv[1]))
+    update_mem_file(int(argv[1]), argv[2], argv[3], heap_start, heap_stop)
