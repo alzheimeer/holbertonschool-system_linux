@@ -30,13 +30,14 @@ def write_in_mem(pid, search_string, replace_string, ini, final):
     try:
         with open("/proc/{:d}/mem".format(pid), "r+b") as f:
             f.seek(ini)
-            data = f.read(final - ini)
-            print("[*] Read {:d} bytes".format(final - ini))
-            string_offset = data.index(bytes(search_string, "ASCII"))
-            if string_offset > -1:
+            numbytes = final - ini
+            data = f.read(numbytes)
+            print("[*] Read {:d} bytes".format(numbytes))
+            i = data.index(bytes(search_string, "ASCII"))
+            if i > -1:
                 print("[*] String found at {:02X}"
-                      .format(ini + string_offset))
-                f.seek(ini + string_offset)
+                      .format(ini + i))
+                f.seek(ini + i)
                 written = f.write(replace_string.encode() + b'\x00')
                 print("[*] {:d} bytes written!".format(written))
             else:
