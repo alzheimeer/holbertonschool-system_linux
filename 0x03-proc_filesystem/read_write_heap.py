@@ -32,12 +32,12 @@ def write_in_mem(pid, search_string, replace_string, ini, final):
             f.seek(ini)
             data = f.read(final - ini)
             print("[*] Read {:d} bytes".format(final - ini))
-            i = data.index(bytes(search_string, "ASCII"))
-            if i > -1:
+            string_offset = data.index(bytes(search_string, "ASCII"))
+            if string_offset > -1:
                 print("[*] String found at {:02X}"
-                      .format(ini + i))
-                f.seek(ini + i)
-                written = f.write(bytes(replace_string, "ASCII"))
+                      .format(ini + string_offset))
+                f.seek(ini + string_offset)
+                written = f.write(replace_string.encode() + b'\x00')
                 print("[*] {:d} bytes written!".format(written))
             else:
                 print(
