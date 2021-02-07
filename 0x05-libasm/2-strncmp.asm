@@ -31,5 +31,3 @@ greater:
 
 equal:
 	mov eax, 0h
-
-	
