@@ -5,7 +5,7 @@ BITS 64
     section .text
 
 asm_strcmp:
-
+	; the order of registers used is: %rdi, %rsi, %rdx, %rcx, %r8, and %r9
 while:
     mov r8b, BYTE [rdi];pasamos a registro de 8 bit
     mov r9b, BYTE [rsi];pasamos a registro de 8 bit
