@@ -32,4 +32,3 @@ menor:
 igual:
 	mov eax, 0;seteamos eax con 0
     ret; salida
-	
