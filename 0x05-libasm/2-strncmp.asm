@@ -8,7 +8,7 @@ asm_strcmp:
 
 while:
 	cmp rdx, 0;comparamos el 3 argumento con 0
-	je equal; si es 0 acabo la comparacion
+	je igual; si es 0 acabo la comparacion
     mov r8b, BYTE [rdi];pasamos a registro de 8 bit
     mov r9b, BYTE [rsi];pasamos a registro de 8 bit
     inc rdi;pasamos a la siguiente letra
