@@ -1,26 +1,44 @@
 BITS 64
-	global asm_strcmp
 
-	section .text
+    global asm_strcmp:
+
+    section .text
 
 asm_strcmp:
 
-while:
-	mov r8b, [rdi] ;pasamos a registro de 8 bit
-	mov r9b, [rsi] ;pasamos a registro de 8 bit
-	cmp r8b, r9b ;comparamos las dos letras
-	jl menor ;salta si es menor A<B (con signo)
-	jg mayor ;salta si mayor A>B (con signo)
-	cmp r8b, 0 ;verificamos que la letra no sea 0
-	je igual ;salta si igual	A=B
-	inc rdi ;pasamos a la siguiente letra
-	inc rsi ;pasamos a la siguiente letra
-	jmp while ;volvemos a empezar el loop
-menor:
-	mov eax, -1
+           
+
+loop_strcmp:
+    mov r8b, BYTE [rdi + rcx]
+    mov r9b, BYTE [rsi + rcx]
+    inc rdi
+	inc rsi
+    test r8b, r8b
+    je check_null              
+    test r9b, r9b
+    je set_one               
+    cmp r8b, r9b
+    je loop_strcmp             
+    jmp compare
+
+check_null:
+    test r9b, r9b
+    je end_strcmp
+    jmp set_negative
+
+compare:
+    cmp r8b, r9b
+    jl set_negative
+    jmp set_one
+
+set_one:
+    mov eax, 1
     ret
-mayor:
-	mov eax, 1
-	ret
-igual:
+
+set_negative:
+    mov eax, -1            
+    ret
+
+end_strcmp:
 	mov eax, 0
+    ret
