@@ -1,34 +1,34 @@
 BITS 64
+	global asm_strncmp	; export 'asm_strncmp' function
 
-    global asm_strcmp:
-	; the order of registers used is: %rdi, %rsi, %rdx, %rcx, %r8, and %r9
-    section .text
+	section .text
 
-asm_strcmp:
+asm_strncmp:
+
 
 while:
-	cmp rdx, 0;comparamos el 3 argumento con 0
-	je igual; si es 0 acabo la comparacion
-    mov r8b, BYTE [rdi];pasamos a registro de 8 bit
-    mov r9b, BYTE [rsi];pasamos a registro de 8 bit
-    inc rdi;pasamos a la siguiente letra
-	inc rsi;pasamos a la siguiente letra
-    cmp r8b, r9b;comparamos las dos letras
-    jl menor;salta si es menor A<B (con signo)
-    jg mayor;salta si mayor A>B (con signo)
-	cmp r8b, 0;verificamos que no haya llegado al final de el string
-    je igual;salta si igual
-	dec rdx; decrementamos en uno rdx
-    jmp while; salta a while:
-
-mayor:
-    mov eax, 1;seteamos eax con 1
-    ret; salida
+	cmp rdx, 0
+	je igual
+	mov r8b,	[rdi]
+	mov r9b,	[rsi]
+	cmp r8b,	r9b
+	jl menor
+	jg mayor
+	cmp r8b,	0
+	je igual
+	inc rdi
+	inc rsi
+	dec rdx
+	jmp while
 
 menor:
-    mov eax, -1;seteamos eax con -1
-    ret; salida
+	mov eax, -1
+	ret
+
+mayor:
+	mov eax, 1
+	ret
 
 igual:
-	mov eax, 0;seteamos eax con 0
-    ret; salida
+	mov eax, 0
+    ret
