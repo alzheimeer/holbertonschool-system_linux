@@ -7,7 +7,7 @@ BITS 64
 asm_memcpy:
 
 while:
-	test rdx, rdx;un AND origen y destino no save, modifica flaqs
+	cmp rdx, rdx
 	je end
 	mov bl, BYTE[rsi]
 	mov BYTE[rdi], bl
