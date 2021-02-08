@@ -11,6 +11,4 @@ asm_putc:
     mov rdi, 1                  ; stdout
     mov rdx, 1                  ; one byte
     syscall
-
-end:
     ret
