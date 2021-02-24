@@ -1,23 +1,21 @@
 #include "signals.h"
 
 /**
- * sig_handler - Entry point
- * @signum: dsadasd
- * Return: not
+ * siginthandler - action to take on SIGINT delivery
+ * @signum: signal value to print
  */
-void sig_handler(int signum)
+void siginthandler(int signum)
 {
-	printf("Gotcha! [%d]\n", signum);
+	printf("Gotcha! [%i]\n", signum);
+	fflush(stdout);
 }
 
 /**
- * handle_signal - Entry point
+ * handle_signal - sets a handler for the signal SIGINT
  *
- * Return: -1 error
+ * Return: 0 on success, -1 on error
  */
 int handle_signal(void)
 {
-	if (signal(SIGINT, sig_handler) == SIG_ERR)
-		return (-1);
-	return (0);
+	return (signal(SIGINT, siginthandler) == SIG_ERR ? -1 : 0);
 }

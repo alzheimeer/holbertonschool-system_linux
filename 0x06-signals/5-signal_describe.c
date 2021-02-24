@@ -1,3 +1,5 @@
+#include "signals.h"
+
 /**
  * main - program to print info
  * @argc: argument count

@@ -1,9 +1,9 @@
-#!/bin/bash
-# script that sends the signal SIGQUIT to a process, given its PID
-if [ $# -ne 1 ]
-then
-  echo "Usage: $0 <pid>"
-  exit 1
-fi
+#!/usr/bin/env sh
+# Sends SIGQUIT to a process using its PID
 
-kill -s SIGQUIT $1
+if [ $# != 1 ]
+then
+	echo "Usage: $0 <pid>"
+	exit 1
+fi
+kill -QUIT "$1"
