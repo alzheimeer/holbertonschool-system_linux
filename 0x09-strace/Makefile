@@ -4,6 +4,15 @@ UTILS = utils
 
 .PHONY: clean, check
 
+INSTRUCCIONES:  $@:Se sustituye por el nombre del objetivo de la presente regla.
+   				$^:Se sustituye por una lista separada por espacios de cada una de las dependencias de la presente regla.
+				$*:Se sustituye por la raíz de un nombre de fichero.
+   				$<:Se sustituye por la primera dependencia de la presente regla.
+   				$?:Se sustituye por una lista separada por espacios de cada una de las dependencias de la presente regla que sean más nuevas que el objetivo de la regla.
+   				$(@D):Se sustituye por la parte correspondiente al subdirectorio de la ruta del fichero correspondiente a un objetivo que se encuentre en un subdirectorio.
+   				$(@F):Se sustituye por la parte correspondiente al nombre del fichero de la ruta del fichero correspondiente a un objetivo que se encuentre en un subdirectorio.
+
+
 strace_0: strace_0.o $(HEADERS)
 	gcc $(CFLAGS) -o $@  $^
 
