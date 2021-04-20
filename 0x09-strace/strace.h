@@ -14,7 +14,4 @@
 #include <sys/user.h>
 #include "syscalls.h"
 
-char *read_string(pid_t child_pid, unsigned long addr);
-void print_retval(long retval, struct user_regs_struct u_in);
-
 #endif /* STRACE_H */

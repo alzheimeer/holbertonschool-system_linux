@@ -1,7 +1,4 @@
 #include "strace.h"
-#include <stdlib.h>
-#include <sys/types.h>
-#include <sys/reg.h>
 
 /**
  * wait_syscall - Waits for syscall invocation in subprocess
