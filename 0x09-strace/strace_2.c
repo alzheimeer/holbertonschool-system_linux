@@ -32,7 +32,7 @@ int main(int argc, char *argv[], char *envp[])
 {
 	pid_t child;
 	int status;
-	long syscall;
+	long syscall, retval;
 
 	if (argc < 2)
 	{
