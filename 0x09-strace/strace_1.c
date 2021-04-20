@@ -42,14 +42,12 @@ int main(int argc, char *argv[], char *envp[])
 		fprintf(stderr, "%s command [args...]\n", argv[0]);
 		return (EXIT_FAILURE);
 	}
-
 	child = fork();
 	if (child == -1)
 		return (EXIT_FAILURE);
 	else if (child == 0)
 	{
-		ptrace(PTRACE_TRACEME, 0, 0, 0);
-		kill(getpid(), SIGSTOP);
+		ptrace(PTRACE_TRACEME, 0, 0, 0), kill(getpid(), SIGSTOP);
 		if (execve(argv[1], argv + 1, envp) == -1)
 		{
 			dprintf(STDERR_FILENO, "Exec failed: %d\n", errno);
