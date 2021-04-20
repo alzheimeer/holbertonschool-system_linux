@@ -1,61 +1,66 @@
-#include "syscalls.h"
 #include "strace.h"
 
 /**
- * trace_child - traces child process
- * @av: argument vector for execve
- * @envp: environ for execve
+ * read_string - Returns the string stored in the memory @addr
+ * @child_pid: pid of the process
+ * @addr: address to be looked in
+ * Return: string stored in memory
  */
-void trace_child(char **av, char **envp)
+char *read_string(pid_t child_pid, unsigned long addr)
 {
-	ptrace(PTRACE_TRACEME, 0, 0, 0);
-	kill(getpid(), SIGSTOP);
-	if (execve(av[1], av + 1, envp) == -1)
-	{
-		dprintf(STDERR_FILENO, "Exec failed: %d\n", errno);
-		exit(-1);
-	}
-}
-
-/**
- * trace_parent - calls made by tracing parent
- * @child_pid: pid of child to trace
- */
-void trace_parent(pid_t child_pid)
-{
-	int status;
-	struct user_regs_struct uregs;
-
-	waitpid(child_pid, &status, 0);
-	ptrace(PTRACE_SETOPTIONS, child_pid, 0, PTRACE_O_TRACESYSGOOD);
-	while (1)
-	{
-		if (await_syscall(child_pid))
-			break;
-		memset(&uregs, 0, sizeof(uregs));
-		ptrace(PTRACE_GETREGS, child_pid, 0, &uregs);
-		printf("%lu\n", (long)uregs.orig_rax);
-		if (await_syscall(child_pid))
-			break;
-	}
-}
-
-/**
- * await_syscall - waits for a syscall
- * @child_pid: pid of process to await
- * Return: 0 if child stopped, 1 if exited
- */
-int await_syscall(pid_t child_pid)
-{
-	int status;
+	char *str = malloc(4096);
+	unsigned int allocated = 4096;
+	unsigned long read = 0;
+	unsigned long tmp;
 
 	while (1)
 	{
-		ptrace(PTRACE_SYSCALL, child_pid, 0, 0);
-		waitpid(child_pid, &status, 0);
-		if (WIFSTOPPED(status) && WSTOPSIG(status) & 0x80)
-			return (0);
-		if (WIFEXITED(status))
-			return (1);
+		if (read + sizeof(tmp) > allocated)
+		{
+			allocated *= 2;
+			str = realloc(str, allocated);
+		}
+		tmp = ptrace(PTRACE_PEEKDATA, child_pid, addr + read);
+		if (errno != 0)
+		{
+			str[read] = 0;
+			break;
+		}
+		memcpy(str + read, &tmp, sizeof(tmp));
+		if (memchr(&tmp, 0, sizeof(tmp)) != NULL)
+			break;
+		read += sizeof(tmp);
 	}
+	return (str);
+}
+
+/**
+ * print_retval - print arguments to syscalls
+ * @retval: return value of a syscall
+ * @u_in: registers struct
+ */
+void print_retval(long retval, struct user_regs_struct u_in)
+{
+	char *str = ") = ";
+
+	if (syscalls_64_g[u_in.orig_rax].ret == INT)
+		fprintf(stdout, "%s%d\n", str, (int)retval);
+	else if (syscalls_64_g[u_in.orig_rax].ret == LONG)
+		fprintf(stdout, "%s%ld\n", str, (long)retval);
+	else if (syscalls_64_g[u_in.orig_rax].ret == SIZE_T)
+		fprintf(stdout, "%s%lu\n", str, (ulong)retval);
+	else if (syscalls_64_g[u_in.orig_rax].ret == SSIZE_T)
+		fprintf(stdout, "%s%ld\n", str, (long)retval);
+	else if (syscalls_64_g[u_in.orig_rax].ret == U64)
+		fprintf(stdout, "%s%lu\n", str, (ulong)retval);
+	else if (syscalls_64_g[u_in.orig_rax].ret == UINT32_T)
+		fprintf(stdout, "%s%lu\n", str, (ulong)retval);
+	else if (syscalls_64_g[u_in.orig_rax].ret == UNSIGNED_INT)
+		fprintf(stdout, "%s%u\n", str, (uint)retval);
+	else if (syscalls_64_g[u_in.orig_rax].ret == UNSIGNED_LONG)
+		fprintf(stdout, "%s%lu\n", str, (ulong)retval);
+	else if (syscalls_64_g[u_in.orig_rax].ret == PID_T)
+		fprintf(stdout, "%s%d\n", str, (int)retval);
+	else
+		fprintf(stdout, "%s%#lx\n", str, retval);
 }
