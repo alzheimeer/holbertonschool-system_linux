@@ -1,6 +1,27 @@
 #include "strace.h"
 
 /**
+ * wait_syscall - Waits for syscall invocation in subprocess
+ * @child: subprocess PID
+ * Return: 0 if syscall is called, 0 if subprocess is terminated
+*/
+int wait_syscall(pid_t child)
+{
+	int status;
+
+	while (1)
+	{
+		ptrace(PTRACE_SYSCALL, child, 0, 0);
+		waitpid(child, &status, 0);
+		if (WIFSTOPPED(status) && WSTOPSIG(status) & 0x80)
+			return (0);
+		if (WIFEXITED(status))
+			break;
+	}
+	return (1);
+}
+
+/**
  * print_register - print registers (params of syscalls)
  * @u_in: registers struct
  * @idx: parameter index
