@@ -41,7 +41,7 @@ int main(int argc, char *argv[], char *envp[])
 		ptrace(PTRACE_SETOPTIONS, child, 0, PTRACE_O_TRACESYSGOOD);
 		while (1)
 		{
-			if (await_syscall(child) != 0)
+			if (wait_syscall(child) != 0)
 				break;
 
 			syscall = ptrace(PTRACE_PEEKUSER, child, sizeof(long) * ORIG_RAX);
