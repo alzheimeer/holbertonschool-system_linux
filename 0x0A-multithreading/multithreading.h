@@ -1,17 +1,17 @@
 #ifndef __MULTITHREADING_H__
 #define __MULTITHREADING_H__
 
-#include <stdio.h>
+
 #include <stdlib.h>
 #include <stddef.h>
 #include <stdint.h>
-#include <stdarg.h>
+#include <errno.h>
+#include <stdio.h>
 #include <pthread.h>
-#include <sys/sysinfo.h>
+#include <stdarg.h>
 #include "list.h"
-#include "pool_threading.h"
+#include <sys/sysinfo.h>
 
-#define NUM_THREADS get_nprocs()
 
 /**
  * struct pixel_s - RGB pixel
