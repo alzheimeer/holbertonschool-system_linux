@@ -18,8 +18,7 @@ typedef struct node_s
 } node_t;
 
 /**
- * struct list_s - List structure
- *
+ *  struct list_s - List structure
  * @head: Ponter to the front node
  * @tail: Ponter to the back node
  * @size: Number of nodes in the list
