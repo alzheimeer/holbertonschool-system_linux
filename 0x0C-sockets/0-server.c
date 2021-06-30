@@ -30,8 +30,6 @@ int main(void)
 	addrport.sin_port = htons(PORT); /* Local port */
 	addrport.sin_addr.s_addr = htonl(INADDR_ANY); /* Any incoming interface */
 
-	
-
 	/* Bind to the local address */
 	if (bind(sockid, (struct sockaddr *) &addrport, sizeof(addrport)) < 0)
 		err_socket("bind failed");
