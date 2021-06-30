@@ -18,7 +18,7 @@ void err_socket(char *msg)
  */
 int main(void)
 {
-	int sockid = 0, server_size = 0;
+	int sockid = 0;
 	struct sockaddr_in addrport;
 
 	/*Create the file descriptor for a socket server*/
@@ -30,11 +30,13 @@ int main(void)
 	addrport.sin_port = htons(PORT); /* Local port */
 	addrport.sin_addr.s_addr = htonl(INADDR_ANY); /* Any incoming interface */
 
-	server_size = sizeof(addrport);
-	if (bind(sockid, (struct sockaddr *) &addrport, server_size) == -1)
+	
+
+	/* Bind to the local address */
+	if (bind(sockid, (struct sockaddr *) &addrport, sizeof(addrport)) < 0)
 		err_socket("bind failed");
-	/*Let the listening of the socket with 10 waiting clients*/
-	if (listen(sockid, NUM_CLNTS) == -1)
+	/* Mark the socket so it will listen for incoming connections */
+	if (listen(sockid, MAXPENDING) < 0)
 		err_socket("listen failed");
 	/*Waiting a client connection*/
 	printf("Socket server listen on port %d\n", PORT);

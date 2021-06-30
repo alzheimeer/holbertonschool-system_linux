@@ -10,6 +10,6 @@
 #include <unistd.h>
 
 #define PORT 12345
-#define NUM_CLNTS 10
+#define MAXPENDING 10
 
 #endif
