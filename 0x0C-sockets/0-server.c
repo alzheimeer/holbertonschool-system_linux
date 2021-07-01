@@ -1,45 +1,32 @@
-#include "sockets.h"
+#include <stdio.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <stdlib.h>
+
+#define PORT 12345
 
 /**
- * err_socket - pritn the error message when socket app fails
- * @msg: message to print
- * Return: nothing
- */
-void err_socket(char *msg)
-{
-	printf("%s\n", msg);
-	exit(EXIT_FAILURE);
-}
-
-/**
- * main - opens an IPv4/TCP socket, and listens to traffic on
- * port 12345 (Any address).
- * Return: 0 on success
+ * main - simple socket usage example
+ * Return: 0 on success, 1 on failure
  */
 int main(void)
 {
-	int sockid = 0;
-	struct sockaddr_in addrport;
+	int sck;
+	struct sockaddr_in addr;
 
-	/*Create the file descriptor for a socket server*/
-	sockid = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
-	if (sockid == -1)
-		err_socket("socket failed");
-	/*Bind the socket with a port and an address in ipv4*/
-	addrport.sin_family = AF_INET; /* Internet address family */
-	addrport.sin_port = htons(PORT); /* Local port */
-	addrport.sin_addr.s_addr = htonl(INADDR_ANY); /* Any incoming interface */
+	sck = socket(AF_INET, SOCK_STREAM, 0);
+	if (sck == -1)
+		return (EXIT_FAILURE);
 
-	/* Bind to the local address */
-	if (bind(sockid, (struct sockaddr *) &addrport, sizeof(addrport)) < 0)
-		err_socket("bind failed");
-	/* Mark the socket so it will listen for incoming connections */
-	if (listen(sockid, MAXPENDING) < 0)
-		err_socket("listen failed");
-	/*Waiting a client connection*/
-	printf("Socket server listen on port %d\n", PORT);
+	addr.sin_family = AF_INET;
+	addr.sin_addr.s_addr = INADDR_ANY;
+	addr.sin_port = htons(PORT);
+
+	if (bind(sck, (struct sockaddr *)&addr, sizeof(addr)) < 0)
+		return (EXIT_FAILURE);
+	listen(sck, 3);
 	while (1)
 		;
-
-	return (0);
+	return (EXIT_SUCCESS);
 }

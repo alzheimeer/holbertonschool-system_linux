@@ -1,9 +1,16 @@
-#include "sockets.h"
+#include <stdio.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+#define PORT 12345
 
 /**
-* main - socket which accepts connections
-* Return: 0 on success, 1 on failure
-*/
+	 * main - socket which accepts connections
+	 * Return: 0 on success, 1 on failure
+	 */
 int main(void)
 {
 	int sck, new_sck, clt_size;

@@ -1,11 +1,17 @@
-#include "sockets.h"
-
+#include <string.h>
+#include <stdio.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <netdb.h>
 /**
-* main - socket which connects to a server
-* @argc: number of arguments
-* @argv: arguments
-* Return: 0 on success, 1 on failure
-*/
+	 * main - socket which connects to a server
+	 * @argc: number of arguments
+	 * @argv: arguments
+	 * Return: 0 on success, 1 on failure
+	 */
 int main(int argc, char *argv[])
 {
 	int sck;
