@@ -1,13 +1,13 @@
 # :white_check_mark: Holberton School System Linux
 System programming &amp; Algorithms - Linux Programming
 
-## :books: Challenges
+<!-- ## :books: Challenges
 - :bookmark_tabs: [0x00-ls](0x00-ls/.#readme)
 - :bookmark_tabs: [0x01-getline](0x01-getline/.#readme)
 - :bookmark_tabs: [0x03-proc_filesystem](0x03-proc_filesystem/.#readme)
 - :bookmark_tabs: [0x04-readelf](0x04-readelf/.#readme)
 - :bookmark_tabs: [0x05-libasm](0x05-libasm/.#readme)
-- :bookmark_tabs: [0x06-signals](0x06-signals/.#readme)
+- :bookmark_tabs: [0x06-signals](0x06-signals/.#readme) -->
 
 ## :sunglasses: Author
 Edgar Quintero "Alzheimeer"
